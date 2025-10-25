@@ -430,6 +430,42 @@ body {
     animation: candleAppear 0.3s ease-out forwards;
 }
 
+.flame {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: radial-gradient(circle, #FF6B35, #FF8C42, #FFA500);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: flameFlicker 0.5s ease-in-out infinite alternate;
+    box-shadow: 0 0 6px #FF6B35, 0 0 12px #FF8C42, 0 0 18px #FFA500;
+}
+
+@keyframes flameFlicker {
+    0% {
+        transform: translateX(-50%) scale(1) rotate(-1deg);
+        opacity: 0.9;
+    }
+    25% {
+        transform: translateX(-50%) scale(1.1) rotate(1deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translateX(-50%) scale(0.9) rotate(-0.5deg);
+        opacity: 0.8;
+    }
+    75% {
+        transform: translateX(-50%) scale(1.05) rotate(0.5deg);
+        opacity: 0.95;
+    }
+    100% {
+        transform: translateX(-50%) scale(1) rotate(-1deg);
+        opacity: 0.9;
+    }
+}
+
 .candle:nth-child(1) { animation-delay: 4s; }
 .candle:nth-child(2) { animation-delay: 4.1s; }
 .candle:nth-child(3) { animation-delay: 4.2s; }
@@ -438,6 +474,16 @@ body {
 .candle:nth-child(6) { animation-delay: 4.5s; }
 .candle:nth-child(7) { animation-delay: 4.6s; }
 .candle:nth-child(8) { animation-delay: 4.7s; }
+
+/* Individual flame variations */
+.candle:nth-child(1) .flame { animation-duration: 0.4s; }
+.candle:nth-child(2) .flame { animation-duration: 0.6s; }
+.candle:nth-child(3) .flame { animation-duration: 0.5s; }
+.candle:nth-child(4) .flame { animation-duration: 0.7s; }
+.candle:nth-child(5) .flame { animation-duration: 0.45s; }
+.candle:nth-child(6) .flame { animation-duration: 0.55s; }
+.candle:nth-child(7) .flame { animation-duration: 0.65s; }
+.candle:nth-child(8) .flame { animation-duration: 0.5s; }
 
 @keyframes candleAppear {
     from {
@@ -688,6 +734,25 @@ body {
     75% { transform: rotate(10deg) scale(1.1); }
 }
 
+.acca-message {
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    color: var(--primary-pink);
+    font-weight: 600;
+    margin: var(--spacing-md) 0;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.ameen-message {
+    font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+    color: var(--warm-gold);
+    font-weight: 700;
+    margin: var(--spacing-sm) 0;
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    animation: pulse 2s ease-in-out infinite;
+}
+
 .anonymous-signature {
     font-style: italic;
     color: var(--text-accent);
@@ -808,6 +873,10 @@ body {
         position: fixed;
         top: 0;
         left: 0;
+        /* Center content properly */
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     
     .surprise-message {
@@ -815,6 +884,10 @@ body {
         margin: var(--spacing-md);
         max-width: 85vw;
         max-height: 80vh;
+        /* Center the message content */
+        transform: translateY(0);
+        position: relative;
+        top: 0;
     }
     
     .surprise-button {
@@ -908,15 +981,22 @@ body {
         position: fixed;
         top: 0;
         left: 0;
+        /* Center content properly on mobile */
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     
     .surprise-message {
         padding: var(--spacing-md);
         margin: var(--spacing-sm);
         max-width: 90vw;
-        max-height: 85vh;
-        /* Better mobile positioning */
+        max-height: 80vh;
+        /* Center the message content */
         transform: translateY(0);
+        /* Ensure it's visible without scrolling */
+        position: relative;
+        top: 0;
     }
     
     .surprise-button {
