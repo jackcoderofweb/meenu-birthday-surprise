@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 18th Birthday! 🎂</title>
+    <meta name="description" content="A magical anonymous birthday surprise">
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="background-container">
+        <div class="stars"></div>
+        <div class="floating-balloons"></div>
+        <div class="sparkles"></div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+        <!-- Music Control -->
+        <button id="musicToggle" class="music-toggle" aria-label="Toggle background music">
+            <i class="fas fa-music"></i>
+            <span class="music-text">Play Music</span>
+        </button>
+        
+        <!-- Hidden Audio Element -->
+        <audio id="backgroundMusic" loop preload="auto" volume="0.05">
+            <source src="happy-birthday-155461.mp3" type="audio/mpeg">
+            <!-- Fallback: Use a free music service or remove if no music available -->
+            Your browser does not support the audio element.
+        </audio>
+        
+        <!-- Test Audio Element -->
+        <audio id="testAudio" style="display: none;">
+            <source src="happy-birthday-155461.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Birthday Title -->
+        <header class="birthday-header">
+            <h1 class="birthday-title" id="birthdayTitle">
+                <span class="letter">H</span>
+                <span class="letter">a</span>
+                <span class="letter">p</span>
+                <span class="letter">p</span>
+                <span class="letter">y</span>
+                <span class="letter space"></span>
+                <span class="letter">1</span>
+                <span class="letter">8</span>
+                <span class="letter space"></span>
+                <span class="letter">B</span>
+                <span class="letter">i</span>
+                <span class="letter">r</span>
+                <span class="letter">t</span>
+                <span class="letter">h</span>
+                <span class="letter">d</span>
+                <span class="letter">a</span>
+                <span class="letter">y</span>
+                <span class="emoji">🎂</span>
+            </h1>
+        </header>
+
+        <!-- Cake Animation -->
+        <div class="cake-container" id="cakeContainer">
+            <div class="cake">
+                <div class="cake-layer cake-bottom"></div>
+                <div class="cake-layer cake-middle"></div>
+                <div class="cake-layer cake-top"></div>
+                <div class="cake-name">MEENU</div>
+                <div class="candles">
+                    <div class="candle" data-candle="1">
+                        <div class="flame"></div>
+                    </div>
+                    <div class="candle" data-candle="2">
+                        <div class="flame"></div>
+                    </div>
+                    <div class="candle" data-candle="3">
+                        <div class="flame"></div>
+                    </div>
+                    <div class="candle" data-candle="4">
+                        <div class="flame"></div>
+                    </div>
+                    <div class="candle" data-candle="5">
+                        <div class="flame"></div>
+                    </div>
+                    <div class="candle" data-candle="6">
+                        <div class="flame"></div>
+                    </div>
+                    <div class="candle" data-candle="7">
+                        <div class="flame"></div>
+                    </div>
+                    <div class="candle" data-candle="8">
+                        <div class="flame"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Birthday Message -->
+        <section class="birthday-message" id="birthdayMessage">
+            <div class="message-content">
+                <p class="main-message">
+                    Eighteen years of laughter, chaos, dreams, and beauty —<br>
+                    May your next chapters be even brighter.
+                </p>
+                <p class="sub-message">
+                    Someone, somewhere, is proud of who you're becoming 💫
+                </p>
+            </div>
+        </section>
+
+        <!-- Rotating Quotes -->
+        <section class="quotes-section" id="quotesSection">
+            <div class="quote-container">
+                <blockquote class="quote" id="currentQuote">
+                    "Eighteen candles, one wish — may your life glow brighter than all of them combined."
+                </blockquote>
+                <div class="quote-indicators">
+                    <span class="indicator active" data-quote="0"></span>
+                    <span class="indicator" data-quote="1"></span>
+                    <span class="indicator" data-quote="2"></span>
+                    <span class="indicator" data-quote="3"></span>
+                    <span class="indicator" data-quote="4"></span>
+                    <span class="indicator" data-quote="5"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Surprise Button -->
+        <section class="surprise-section" id="surpriseSection">
+            <button class="surprise-button" id="surpriseButton" aria-label="Tap for a surprise">
+                <span class="button-text">Tap for a Surprise</span>
+                <span class="button-emoji">🎁</span>
+            </button>
+        </section>
+
+        <!-- Hidden Surprise Content -->
+        <div class="surprise-content" id="surpriseContent">
+            <div class="surprise-message">
+                <h2>You are loved! 💕</h2>
+                <p>May this special day be filled with joy, laughter, and wonderful memories.</p>
+                <div class="dancing-emoji">🎉</div>
+                <p class="anonymous-signature">From: Someone who cares (Anonymous 💌)</p>
+            </div>
+        </div>
+
+        <!-- Confetti Canvas -->
+        <canvas id="confettiCanvas"></canvas>
+    </main>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Preparing your magical surprise...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
