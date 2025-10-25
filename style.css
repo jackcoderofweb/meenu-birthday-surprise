@@ -214,6 +214,8 @@ body {
     align-items: center;
     justify-content: center;
     padding: var(--spacing-md);
+    /* Add top padding to prevent overlap with music button */
+    padding-top: calc(var(--spacing-md) + 80px);
     opacity: 0;
     animation: fadeInUp var(--animation-slow) ease-out 1s forwards;
 }
@@ -232,8 +234,8 @@ body {
 /* Music Toggle Button */
 .music-toggle {
     position: fixed;
-    top: var(--spacing-md);
-    right: var(--spacing-md);
+    top: 20px;
+    right: 20px;
     background: rgba(255, 107, 157, 0.2);
     border: 2px solid var(--primary-pink);
     border-radius: 50px;
@@ -243,6 +245,11 @@ body {
     transition: all var(--animation-fast) ease;
     backdrop-filter: blur(10px);
     z-index: 1000;
+    min-width: 50px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .music-toggle:hover {
@@ -379,6 +386,28 @@ body {
     to {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
     }
 }
 
@@ -608,19 +637,14 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(15, 15, 35, 0.95);
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: all var(--animation-medium) ease;
-    backdrop-filter: blur(10px);
+    z-index: 10000;
 }
 
 .surprise-content.show {
-    opacity: 1;
-    visibility: visible;
+    display: flex !important;
 }
 
 .surprise-message {
@@ -631,6 +655,11 @@ body {
     border: 2px solid var(--primary-pink);
     max-width: 500px;
     margin: var(--spacing-md);
+    position: relative;
+    animation: surpriseAppear 0.6s ease-out;
+    /* Ensure it's always visible */
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .surprise-message h2 {
@@ -680,61 +709,222 @@ body {
 @media (max-width: 768px) {
     .main-container {
         padding: var(--spacing-sm);
+        /* Extra top padding for mobile to separate from music button */
+        padding-top: calc(var(--spacing-sm) + 90px);
+    }
+    
+    .birthday-title {
+        font-size: clamp(2rem, 7vw, 3.5rem);
+        line-height: 1.2;
+        margin-top: 80px; /* Increased space for music button */
+    }
+    
+    .main-message {
+        font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+        line-height: 1.4;
+    }
+    
+    .sub-message {
+        font-size: clamp(0.9rem, 2.8vw, 1.2rem);
+    }
+    
+    .quote {
+        font-size: clamp(1rem, 3vw, 1.3rem);
+        padding: var(--spacing-sm);
+    }
+    
+    .surprise-button {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: clamp(1rem, 3vw, 1.3rem);
+    }
+    
+    .cake-container {
+        margin: var(--spacing-lg) 0;
     }
     
     .cake {
-        width: 150px;
+        width: 180px;
+        height: 140px;
+        margin: 0 auto;
+    }
+    
+    .cake-bottom {
+        width: 160px;
+        height: 55px;
+        left: 10px;
+    }
+    
+    .cake-middle {
+        width: 130px;
+        height: 45px;
+        left: 25px;
+        bottom: 45px;
+    }
+    
+    .cake-top {
+        width: 100px;
+        height: 35px;
+        left: 40px;
+        bottom: 80px;
+    }
+    
+    .cake-name {
+        font-size: 16px;
+        top: 50%;
+        left: 50%;
+    }
+    
+    .candles {
+        gap: 5px;
+        top: -15px;
+    }
+    
+    .candle {
+        width: 4px;
+        height: 20px;
+    }
+    
+    .music-toggle {
+        top: 10px;
+        right: 10px;
+        padding: 8px;
+        min-width: 45px;
+        min-height: 45px;
+        font-size: 16px;
+    }
+    
+    .music-toggle .music-text {
+        display: none;
+    }
+    
+    .music-toggle i {
+        margin-right: 0;
+    }
+    
+    .surprise-content {
+        /* Ensure full viewport coverage */
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+    
+    .surprise-message {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-md);
+        max-width: 85vw;
+        max-height: 80vh;
+    }
+    
+    .surprise-button {
+        /* Better touch target */
+        min-height: 55px;
+        min-width: 220px;
+        touch-action: manipulation;
+    }
+}
+
+@media (max-width: 480px) {
+    .birthday-title {
+        font-size: clamp(1.8rem, 6vw, 2.8rem);
+        margin-top: 70px; /* Increased space for music button */
+        line-height: 1.1;
+    }
+    
+    .main-message {
+        font-size: clamp(1rem, 3vw, 1.4rem);
+        line-height: 1.3;
+    }
+    
+    .sub-message {
+        font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+    }
+    
+    .quote {
+        padding: var(--spacing-sm);
+        font-size: clamp(0.9rem, 2.8vw, 1.1rem);
+        line-height: 1.3;
+    }
+    
+    .surprise-button {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: clamp(0.9rem, 2.8vw, 1.2rem);
+    }
+    
+    .cake {
+        width: 160px;
         height: 120px;
     }
     
     .cake-bottom {
         width: 140px;
         height: 50px;
+        left: 10px;
     }
     
     .cake-middle {
         width: 110px;
         height: 40px;
+        left: 25px;
+        bottom: 40px;
     }
     
     .cake-top {
         width: 80px;
         height: 30px;
+        left: 40px;
+        bottom: 70px;
+    }
+    
+    .cake-name {
+        font-size: 14px;
     }
     
     .candles {
-        gap: 6px;
+        gap: 4px;
+        top: -12px;
     }
     
     .candle {
-        width: 5px;
-        height: 25px;
+        width: 3px;
+        height: 18px;
     }
     
     .music-toggle {
-        top: var(--spacing-sm);
-        right: var(--spacing-sm);
-        padding: var(--spacing-xs);
+        top: 8px;
+        right: 8px;
+        padding: 6px;
+        min-width: 40px;
+        min-height: 40px;
+        font-size: 14px;
     }
     
-    .music-toggle .music-text {
-        display: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .birthday-title {
-        font-size: clamp(2rem, 6vw, 3rem);
+    .surprise-content {
+        /* Ensure full viewport coverage on mobile */
+        width: 100vw;
+        height: 100vh;
+        /* Prevent any scroll issues */
+        position: fixed;
+        top: 0;
+        left: 0;
     }
     
-    .quote {
-        padding: var(--spacing-sm);
-        font-size: clamp(1rem, 3vw, 1.2rem);
+    .surprise-message {
+        padding: var(--spacing-md);
+        margin: var(--spacing-sm);
+        max-width: 90vw;
+        max-height: 85vh;
+        /* Better mobile positioning */
+        transform: translateY(0);
     }
     
     .surprise-button {
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-size: clamp(1rem, 3vw, 1.2rem);
+        /* Better touch target for mobile */
+        min-height: 50px;
+        min-width: 200px;
+        /* Improve touch responsiveness */
+        touch-action: manipulation;
     }
 }
 

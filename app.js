@@ -66,6 +66,8 @@ const elements = {
 document.addEventListener('DOMContentLoaded', function() {
     initializePage();
     testAudioFile();
+    attemptAutoplay();
+    testSurpriseElements();
 });
 
 /**
@@ -74,22 +76,19 @@ document.addEventListener('DOMContentLoaded', function() {
 function testAudioFile() {
     const testAudio = document.getElementById('testAudio');
     if (testAudio) {
-        testAudio.addEventListener('loadstart', () => console.log('✅ Audio file found and loading'));
-        testAudio.addEventListener('error', (e) => {
-            console.error('❌ Audio file not found or cannot be loaded');
-            console.error('Make sure happy-birthday-155461.mp3 is in the same folder as index.html');
-        });
-        testAudio.addEventListener('canplay', () => console.log('✅ Audio file ready to play'));
-        
-        // Try to load the audio
         testAudio.load();
     }
     
-    // Set volume to 5% for background music
     if (elements.backgroundMusic) {
         elements.backgroundMusic.volume = 0.05;
-        console.log('🔊 Volume set to 5%');
     }
+}
+
+/**
+ * Test surprise elements
+ */
+function testSurpriseElements() {
+    // Simple test - no console logs
 }
 
 /**
@@ -224,14 +223,21 @@ function setupEventListeners() {
         elements.musicToggle.addEventListener('click', toggleMusic);
     }
     
-    // Surprise button
+    // Surprise button - add both click and touch events for mobile
     if (elements.surpriseButton) {
         elements.surpriseButton.addEventListener('click', showSurprise);
+        elements.surpriseButton.addEventListener('touchstart', handleSurpriseTouch, { passive: false });
     }
     
     // Close surprise content
     if (elements.surpriseContent) {
         elements.surpriseContent.addEventListener('click', (e) => {
+            if (e.target === elements.surpriseContent) {
+                hideSurprise();
+            }
+        });
+        
+        elements.surpriseContent.addEventListener('touchstart', (e) => {
             if (e.target === elements.surpriseContent) {
                 hideSurprise();
             }
@@ -256,6 +262,138 @@ function setupEventListeners() {
 function enableAudio() {
     audioEnabled = true;
     console.log('Audio enabled after user interaction');
+}
+
+/**
+ * Handle surprise button touch events for mobile
+ */
+function handleSurpriseTouch(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    elements.surpriseButton.style.transform = 'scale(0.95)';
+    
+    setTimeout(() => {
+        showSurprise();
+        elements.surpriseButton.style.transform = 'scale(1)';
+    }, 150);
+}
+
+/**
+ * Attempt to autoplay music
+ */
+function attemptAutoplay() {
+    // Try multiple autoplay attempts
+    const tryAutoplay = (attempt = 1) => {
+        if (elements.backgroundMusic && !isMusicPlaying) {
+            console.log(`🎵 Attempting autoplay (attempt ${attempt})...`);
+            
+            // Set volume before playing
+            elements.backgroundMusic.volume = 0.05;
+            
+            const playPromise = elements.backgroundMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('✅ Autoplay successful!');
+                    isMusicPlaying = true;
+                    elements.musicToggle.innerHTML = '<i class="fas fa-pause"></i><span class="music-text">Pause Music</span>';
+                    // Hide any existing hints
+                    hideAutoplayHints();
+                }).catch(error => {
+                    console.log(`❌ Autoplay blocked (attempt ${attempt}):`, error);
+                    
+                    if (attempt < 3) {
+                        // Try again after a longer delay
+                        setTimeout(() => tryAutoplay(attempt + 1), 3000);
+                    } else {
+                        // Show user-friendly hint after all attempts fail
+                        showAutoplayHint();
+                    }
+                });
+            }
+        }
+    };
+    
+    // First attempt after 1 second
+    setTimeout(() => tryAutoplay(1), 1000);
+    
+    // Second attempt after 3 seconds
+    setTimeout(() => tryAutoplay(2), 3000);
+    
+    // Third attempt after 5 seconds
+    setTimeout(() => tryAutoplay(3), 5000);
+}
+
+/**
+ * Hide any existing autoplay hints
+ */
+function hideAutoplayHints() {
+    const existingHints = document.querySelectorAll('.autoplay-hint');
+    existingHints.forEach(hint => hint.remove());
+}
+
+/**
+ * Show subtle hint about music
+ */
+function showAutoplayHint() {
+    // Hide any existing hints first
+    hideAutoplayHints();
+    
+    const hint = document.createElement('div');
+    hint.className = 'autoplay-hint';
+    
+    // Check if mobile
+    const isMobile = window.innerWidth <= 768;
+    
+    hint.style.cssText = `
+        position: fixed;
+        top: ${isMobile ? '70px' : '20px'};
+        right: ${isMobile ? '15px' : '20px'};
+        background: linear-gradient(135deg, rgba(255, 107, 157, 0.95), rgba(255, 139, 171, 0.95));
+        color: white;
+        padding: ${isMobile ? '10px 14px' : '12px 18px'};
+        border-radius: 25px;
+        font-size: ${isMobile ? '12px' : '14px'};
+        font-weight: 500;
+        z-index: 10000;
+        animation: slideInRight 0.5s ease-out;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        max-width: ${isMobile ? '200px' : 'none'};
+        text-align: center;
+    `;
+    hint.innerHTML = '🎵 Click to play birthday music';
+    
+    // Add hover effect
+    hint.addEventListener('mouseenter', () => {
+        hint.style.transform = 'scale(1.05)';
+        hint.style.boxShadow = '0 6px 20px rgba(255, 107, 157, 0.4)';
+    });
+    
+    hint.addEventListener('mouseleave', () => {
+        hint.style.transform = 'scale(1)';
+        hint.style.boxShadow = '0 4px 15px rgba(255, 107, 157, 0.3)';
+    });
+    
+    // Add click handler to play music
+    hint.addEventListener('click', () => {
+        toggleMusic();
+        hint.style.animation = 'slideOutRight 0.3s ease-in forwards';
+        setTimeout(() => hint.remove(), 300);
+    });
+    
+    document.body.appendChild(hint);
+    
+    // Auto remove after 8 seconds
+    setTimeout(() => {
+        if (hint.parentNode) {
+            hint.style.animation = 'slideOutRight 0.3s ease-in forwards';
+            setTimeout(() => hint.remove(), 300);
+        }
+    }, 8000);
 }
 
 /**
@@ -379,18 +517,15 @@ function showMusicErrorMessage() {
  * Show surprise content with confetti
  */
 function showSurprise() {
-    // Trigger confetti explosion
+    // Trigger confetti
     triggerConfetti();
     
     // Show surprise content
     if (elements.surpriseContent) {
-        elements.surpriseContent.classList.add('show');
-        
-        // Add dancing animation to emoji
-        const dancingEmoji = elements.surpriseContent.querySelector('.dancing-emoji');
-        if (dancingEmoji) {
-            dancingEmoji.style.animation = 'dance 1s ease-in-out infinite';
-        }
+        elements.surpriseContent.style.display = 'flex';
+        elements.surpriseContent.style.opacity = '1';
+        elements.surpriseContent.style.visibility = 'visible';
+        elements.surpriseContent.style.zIndex = '10000';
     }
     
     // Hide surprise button
@@ -404,7 +539,13 @@ function showSurprise() {
  */
 function hideSurprise() {
     if (elements.surpriseContent) {
-        elements.surpriseContent.classList.remove('show');
+        elements.surpriseContent.style.display = 'none';
+        elements.surpriseContent.style.opacity = '0';
+        elements.surpriseContent.style.visibility = 'hidden';
+    }
+    
+    if (elements.surpriseButton) {
+        elements.surpriseButton.style.display = 'block';
     }
 }
 
@@ -661,6 +802,21 @@ window.addEventListener('load', () => {
     setTimeout(addFloatingElements, 5000);
 });
 
+// Emergency restore function - call this if screen gets stuck
+window.restoreScreen = function() {
+    console.log('🚨 Emergency restore called');
+    document.body.style.overflow = '';
+    if (elements.surpriseButton) {
+        elements.surpriseButton.style.display = 'block';
+    }
+    if (elements.surpriseContent) {
+        elements.surpriseContent.style.display = 'none';
+        elements.surpriseContent.style.opacity = '0';
+        elements.surpriseContent.style.visibility = 'hidden';
+    }
+    console.log('✅ Screen restored');
+};
+
 // Export functions for potential external use
 window.BirthdaySurprise = {
     showSurprise,
@@ -668,5 +824,6 @@ window.BirthdaySurprise = {
     triggerConfetti,
     toggleMusic,
     rotateQuote,
-    CONFIG
+    CONFIG,
+    restoreScreen: window.restoreScreen
 };
