@@ -229,18 +229,16 @@ function setupEventListeners() {
         elements.surpriseButton.addEventListener('touchstart', handleSurpriseTouch, { passive: false });
     }
     
-    // Close surprise content
-    if (elements.surpriseContent) {
-        elements.surpriseContent.addEventListener('click', (e) => {
-            if (e.target === elements.surpriseContent) {
-                hideSurprise();
-            }
-        });
-        
-        elements.surpriseContent.addEventListener('touchstart', (e) => {
-            if (e.target === elements.surpriseContent) {
-                hideSurprise();
-            }
+    // Remove click outside to close functionality
+    // Card will only close with cross button
+    
+    // Close button functionality
+    const closeButton = document.getElementById('closeButton');
+    if (closeButton) {
+        closeButton.addEventListener('click', hideSurprise);
+        closeButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            hideSurprise();
         });
     }
     

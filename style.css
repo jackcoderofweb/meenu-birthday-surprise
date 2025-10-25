@@ -687,10 +687,44 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
 }
 
 .surprise-content.show {
     display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff0000;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.close-button:hover {
+    background: #cc0000;
+    transform: scale(1.1);
+}
+
+.close-button:active {
+    transform: scale(0.95);
 }
 
 .surprise-message {
@@ -703,9 +737,11 @@ body {
     margin: var(--spacing-md);
     position: relative;
     animation: surpriseAppear 0.6s ease-out;
-    /* Ensure it's always visible */
+    /* Remove scrollbar and ensure content fits */
     max-height: 90vh;
-    overflow-y: auto;
+    overflow: hidden;
+    /* Move content up to show surprise icon clearly */
+    transform: translateY(-30px);
 }
 
 .surprise-message h2 {
@@ -885,9 +921,11 @@ body {
         max-width: 85vw;
         max-height: 80vh;
         /* Center the message content */
-        transform: translateY(0);
+        transform: translateY(-25px);
         position: relative;
         top: 0;
+        /* Remove scrollbar */
+        overflow: hidden;
     }
     
     .surprise-button {
@@ -993,10 +1031,12 @@ body {
         max-width: 90vw;
         max-height: 80vh;
         /* Center the message content */
-        transform: translateY(0);
+        transform: translateY(-20px);
         /* Ensure it's visible without scrolling */
         position: relative;
         top: 0;
+        /* Remove scrollbar */
+        overflow: hidden;
     }
     
     .surprise-button {
@@ -1005,6 +1045,18 @@ body {
         min-width: 200px;
         /* Improve touch responsiveness */
         touch-action: manipulation;
+    }
+    
+    .close-button {
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+        border: 2px solid white;
+        background: #ff0000;
+        position: absolute;
+        z-index: 10001;
     }
 }
 
